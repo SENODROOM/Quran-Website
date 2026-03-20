@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quran Database — Reference Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,200;0,300;0,400;0,600;1,200;1,300&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  @page {
+    size: A4;
+    margin: 18mm 14mm;
+  }
+
+  :root {
+    --gold: #9a6f20;
+    --gold2: #c8973a;
+    --gold-light: #e8c97a;
+    --dark: #1a1008;
+    --mid: #4a3818;
+    --muted: #7a6040;
+    --bg-warm: #fdfaf4;
+    --bg-tint: #f8f2e4;
+    --border: #e8d5aa;
+    --teal: #0f7070;
+    --purple: #5b21b6;
+  }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--dark);
+    background: var(--bg-warm);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 36px 40px;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────── */
+  .header {
+    text-align: center;
+    padding-bottom: 28px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold2), var(--gold-light), var(--gold2), transparent);
+  }
+
+  .arabic-title {
+    font-family: 'Amiri', serif;
+    font-size: 58px;
+    color: var(--gold);
+    direction: rtl;
+    line-height: 1.0;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 0 rgba(154,111,32,0.15);
+  }
+
+  .ornament {
+    font-size: 18px;
+    color: var(--gold2);
+    letter-spacing: 8px;
+    margin: 8px 0;
+  }
+
+  .eng-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .badge {
+    background: var(--bg-tint);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── Section ─────────────────────────────────────────────────── */
+  .section {
+    margin-bottom: 28px;
+    page-break-inside: avoid;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before { content: '◆'; font-size: 7px; }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* ── Stats ───────────────────────────────────────────────────── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+
+  .stat-box {
+    background: linear-gradient(135deg, var(--bg-tint), #f0e8d0);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: 'Cinzel', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── Tables ──────────────────────────────────────────────────── */
+  .table-wrap { overflow: hidden; border-radius: 8px; border: 1px solid var(--border); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11.5px;
+  }
+
+  thead tr {
+    background: linear-gradient(135deg, #2a1f08, #3d2e10);
+  }
+  th {
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f0e8d5;
+    vertical-align: middle;
+    color: var(--dark);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fdfaf5; }
+
+  .arabic-cell {
+    font-family: 'Amiri', serif;
+    font-size: 15px;
+    direction: rtl;
+    color: var(--gold);
+  }
+  .type-meccan { color: var(--gold); font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
+  .type-medinan { color: var(--teal); font-size: 10px; font-family: 'Cinzel', serif; letter-spacing: 0.06em; }
+  .num-cell { font-family: 'Cinzel', serif; font-size: 10px; color: var(--muted); }
+
+  /* ── Code boxes ──────────────────────────────────────────────── */
+  .code-box {
+    background: var(--bg-tint);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold2);
+    border-radius: 0 6px 6px 0;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 10.5px;
+    line-height: 1.75;
+    white-space: pre;
+    overflow: hidden;
+    color: var(--dark);
+  }
+
+  .sql-box {
+    background: #0d0820;
+    border: 1px solid #3b2a6e;
+    border-left: 3px solid #7c3aed;
+    border-radius: 0 6px 6px 0;
+    padding: 14px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 10.5px;
+    line-height: 1.75;
+    white-space: pre;
+    overflow: hidden;
+    color: #c4b5fd;
+  }
+
+  .k  { color: #7c3aed; }
+  .s  { color: #065f46; }
+  .n  { color: var(--gold); }
+  .cm { color: #6b7280; font-style: italic; }
+  .kw { color: #a78bfa; font-weight: bold; }
+  .str { color: #34d399; }
+  .cmt { color: #4b5563; font-style: italic; }
+
+  /* ── Two columns ─────────────────────────────────────────────── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .info-box {
+    background: var(--bg-tint);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .info-box h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .info-box ul { list-style: none; }
+  .info-box li {
+    padding: 3px 0;
+    font-size: 12px;
+    color: var(--mid);
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .info-box li::before { content: '◇'; color: var(--gold2); font-size: 8px; flex-shrink: 0; }
+
+  /* ── API reference ───────────────────────────────────────────── */
+  .api-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .api-item {
+    background: var(--bg-tint);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .api-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .api-url {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--teal);
+    word-break: break-all;
+  }
+
+  /* ── Footer ──────────────────────────────────────────────────── */
+  .footer {
+    text-align: center;
+    margin-top: 32px;
+    padding-top: 16px;
+    position: relative;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold2), transparent);
+  }
+  .footer-arabic {
+    font-family: 'Amiri', serif;
+    font-size: 18px;
+    color: var(--gold);
+    direction: rtl;
+    margin-top: 6px;
+  }
+
+  /* ── Print ───────────────────────────────────────────────────── */
+  .no-print { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; }
+  .print-btn {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+  }
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+    .sql-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Print button -->
+  <div class="no-print">
+    <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="arabic-title">القرآن الكريم</div>
+    <div class="ornament">◆ ◈ ◆</div>
+    <div class="eng-title">The Holy Quran — Database Reference</div>
+    <div class="subtitle">Arabic: Uthmani Script · English: Saheeh International · Source: alquran.cloud</div>
+    <div class="badge-row">
+      <span class="badge">114 Surahs</span>
+      <span class="badge">6,236 Verses</span>
+      <span class="badge">JSON · SQL · PDF</span>
+      <span class="badge">Free to Use</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="section">
+    <div class="section-title">Dataset Statistics</div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val">114</div><div class="stat-label">Surahs</div></div>
+      <div class="stat-box"><div class="stat-val">6,236</div><div class="stat-label">Verses</div></div>
+      <div class="stat-box"><div class="stat-val">86</div><div class="stat-label">Meccan</div></div>
+      <div class="stat-box"><div class="stat-val">28</div><div class="stat-label">Medinan</div></div>
+      <div class="stat-box"><div class="stat-val">2</div><div class="stat-label">Languages</div></div>
+    </div>
+  </div>
+
+  <!-- Info boxes -->
+  <div class="section">
+    <div class="section-title">Data Sources & Formats</div>
+    <div class="two-col">
+      <div class="info-box">
+        <h4>Available Download Formats</h4>
+        <ul>
+          <li><strong>Combined JSON</strong> — Arabic + English per verse</li>
+          <li><strong>Flat JSON</strong> — Single array of all 6,236 verses</li>
+          <li><strong>Split JSON</strong> — Separate Arabic and English arrays</li>
+          <li><strong>SQL (SQLite/MySQL/PostgreSQL)</strong></li>
+          <li><strong>Per-Surah JSON</strong> — Individual surah files</li>
+          <li><strong>PDF Reference Sheet</strong> — This document</li>
+        </ul>
+      </div>
+      <div class="info-box">
+        <h4>Data Quality Notes</h4>
+        <ul>
+          <li>Arabic: Uthmani script (standard mushaf)</li>
+          <li>English: Saheeh International translation</li>
+          <li>BOM character stripped from Surah 1:1</li>
+          <li>Revelation type for all 114 surahs verified</li>
+          <li>All 6,236 verse counts verified (Hafs)</li>
+          <li>Ayah numbering: sequential 1→N per surah</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- API reference -->
+  <div class="section">
+    <div class="section-title">API Endpoints Used</div>
+    <div class="api-grid">
+      <div class="api-item">
+        <div class="api-label">Full Quran — Arabic</div>
+        <div class="api-url">api.alquran.cloud/v1/quran/quran-uthmani</div>
+      </div>
+      <div class="api-item">
+        <div class="api-label">Full Quran — English</div>
+        <div class="api-url">api.alquran.cloud/v1/quran/en.sahih</div>
+      </div>
+      <div class="api-item">
+        <div class="api-label">Single Surah — Arabic</div>
+        <div class="api-url">api.alquran.cloud/v1/surah/{n}/quran-uthmani</div>
+      </div>
+      <div class="api-item">
+        <div class="api-label">Single Surah — English</div>
+        <div class="api-url">api.alquran.cloud/v1/surah/{n}/en.sahih</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON structure -->
+  <div class="section">
+    <div class="section-title">JSON Structure — Combined Format</div>
+    <div class="code-box"><span class="k">"format"</span>: <span class="s">"combined"</span>,
+<span class="k">"total_surahs"</span>: <span class="n">114</span>,
+<span class="k">"total_verses"</span>: <span class="n">6236</span>,
+<span class="k">"surahs"</span>: [
+  {
+    <span class="k">"number"</span>: <span class="n">1</span>,
+    <span class="k">"name_arabic"</span>: <span class="s">"الفاتحة"</span>,
+    <span class="k">"name_english"</span>: <span class="s">"Al-Faatiha"</span>,
+    <span class="k">"name_english_meaning"</span>: <span class="s">"The Opening"</span>,
+    <span class="k">"revelation_type"</span>: <span class="s">"Meccan"</span>,
+    <span class="k">"total_verses"</span>: <span class="n">7</span>,
+    <span class="k">"verses"</span>: [
+      {
+        <span class="k">"ayah"</span>: <span class="n">1</span>,
+        <span class="k">"arabic"</span>: <span class="s">"بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ"</span>,
+        <span class="k">"english"</span>: <span class="s">"In the name of Allah, the Entirely Merciful..."</span>
+      },
+      <span class="cm">// ... 6 more verses</span>
+    ]
+  },
+  <span class="cm">// ... 113 more surahs</span>
+]</div>
+  </div>
+
+  <!-- SQL Schema -->
+  <div class="section">
+    <div class="section-title">SQL Schema</div>
+    <div class="sql-box"><span class="cmt">-- Tables for MySQL · PostgreSQL · SQLite</span>
+
+<span class="kw">CREATE TABLE</span> surahs (
+  id               <span class="kw">INTEGER PRIMARY KEY</span>,
+  number           <span class="kw">INTEGER NOT NULL UNIQUE</span>,
+  name_arabic      <span class="kw">TEXT    NOT NULL</span>,
+  name_english     <span class="kw">TEXT    NOT NULL</span>,
+  name_meaning     <span class="kw">TEXT</span>,
+  total_verses     <span class="kw">INTEGER NOT NULL</span>,
+  revelation_type  <span class="kw">TEXT</span>    <span class="kw">CHECK</span>(revelation_type <span class="kw">IN</span> (<span class="str">'Meccan'</span>,<span class="str">'Medinan'</span>))
+);
+
+<span class="kw">CREATE TABLE</span> verses (
+  id               <span class="kw">INTEGER PRIMARY KEY AUTOINCREMENT</span>,
+  surah_number     <span class="kw">INTEGER NOT NULL REFERENCES</span> surahs(number),
+  ayah_number      <span class="kw">INTEGER NOT NULL</span>,
+  arabic           <span class="kw">TEXT    NOT NULL</span>,
+  english          <span class="kw">TEXT</span>,
+  <span class="kw">UNIQUE</span>(surah_number, ayah_number)
+);
+
+<span class="kw">CREATE INDEX</span> idx_verses_surah <span class="kw">ON</span> verses(surah_number);
+<span class="cmt">-- Full data: use Quran Downloader to generate INSERT statements</span></div>
+  </div>
+
+  <!-- All 114 surahs table -->
+  <div class="section" style="page-break-before: always;">
+    <div class="section-title">All 114 Surahs — Complete Reference</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Arabic</th>
+            <th>English Name</th>
+            <th>Meaning</th>
+            <th>Verses</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="num-cell">1</td><td class="arabic-cell">الفاتحة</td><td>Al-Faatiha</td><td>The Opening</td><td>7</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">2</td><td class="arabic-cell">البقرة</td><td>Al-Baqara</td><td>The Cow</td><td>286</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">3</td><td class="arabic-cell">آل عمران</td><td>Aal-i-Imraan</td><td>Family of Imran</td><td>200</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">4</td><td class="arabic-cell">النساء</td><td>An-Nisaa</td><td>The Women</td><td>176</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">5</td><td class="arabic-cell">المائدة</td><td>Al-Maaida</td><td>The Table</td><td>120</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">6</td><td class="arabic-cell">الأنعام</td><td>Al-An'aam</td><td>The Cattle</td><td>165</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">7</td><td class="arabic-cell">الأعراف</td><td>Al-A'raaf</td><td>The Heights</td><td>206</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">8</td><td class="arabic-cell">الأنفال</td><td>Al-Anfaal</td><td>The Spoils of War</td><td>75</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">9</td><td class="arabic-cell">التوبة</td><td>At-Tawba</td><td>The Repentance</td><td>129</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">10</td><td class="arabic-cell">يونس</td><td>Yunus</td><td>Jonah</td><td>109</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">11</td><td class="arabic-cell">هود</td><td>Hud</td><td>Hud</td><td>123</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">12</td><td class="arabic-cell">يوسف</td><td>Yusuf</td><td>Joseph</td><td>111</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">13</td><td class="arabic-cell">الرعد</td><td>Ar-Ra'd</td><td>The Thunder</td><td>43</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">14</td><td class="arabic-cell">إبراهيم</td><td>Ibrahim</td><td>Abraham</td><td>52</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">15</td><td class="arabic-cell">الحجر</td><td>Al-Hijr</td><td>The Rock</td><td>99</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">16</td><td class="arabic-cell">النحل</td><td>An-Nahl</td><td>The Bee</td><td>128</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">17</td><td class="arabic-cell">الإسراء</td><td>Al-Israa</td><td>The Night Journey</td><td>111</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">18</td><td class="arabic-cell">الكهف</td><td>Al-Kahf</td><td>The Cave</td><td>110</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">19</td><td class="arabic-cell">مريم</td><td>Maryam</td><td>Mary</td><td>98</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">20</td><td class="arabic-cell">طه</td><td>Taa-Haa</td><td>Ta-Ha</td><td>135</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">21</td><td class="arabic-cell">الأنبياء</td><td>Al-Anbiyaa</td><td>The Prophets</td><td>112</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">22</td><td class="arabic-cell">الحج</td><td>Al-Hajj</td><td>The Pilgrimage</td><td>78</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">23</td><td class="arabic-cell">المؤمنون</td><td>Al-Muminoon</td><td>The Believers</td><td>118</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">24</td><td class="arabic-cell">النور</td><td>An-Noor</td><td>The Light</td><td>64</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">25</td><td class="arabic-cell">الفرقان</td><td>Al-Furqaan</td><td>The Criterion</td><td>77</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">26</td><td class="arabic-cell">الشعراء</td><td>Ash-Shu'araa</td><td>The Poets</td><td>227</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">27</td><td class="arabic-cell">النمل</td><td>An-Naml</td><td>The Ant</td><td>93</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">28</td><td class="arabic-cell">القصص</td><td>Al-Qasas</td><td>The Stories</td><td>88</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">29</td><td class="arabic-cell">العنكبوت</td><td>Al-Ankaboot</td><td>The Spider</td><td>69</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">30</td><td class="arabic-cell">الروم</td><td>Ar-Room</td><td>The Romans</td><td>60</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">31</td><td class="arabic-cell">لقمان</td><td>Luqman</td><td>Luqman</td><td>34</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">32</td><td class="arabic-cell">السجدة</td><td>As-Sajda</td><td>The Prostration</td><td>30</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">33</td><td class="arabic-cell">الأحزاب</td><td>Al-Ahzaab</td><td>The Clans</td><td>73</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">34</td><td class="arabic-cell">سبأ</td><td>Saba</td><td>Sheba</td><td>54</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">35</td><td class="arabic-cell">فاطر</td><td>Faatir</td><td>The Originator</td><td>45</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">36</td><td class="arabic-cell">يس</td><td>Yaseen</td><td>Ya Sin</td><td>83</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">37</td><td class="arabic-cell">الصافات</td><td>As-Saaffaat</td><td>Those in Ranks</td><td>182</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">38</td><td class="arabic-cell">ص</td><td>Saad</td><td>The Letter Sad</td><td>88</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">39</td><td class="arabic-cell">الزمر</td><td>Az-Zumar</td><td>The Groups</td><td>75</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">40</td><td class="arabic-cell">غافر</td><td>Ghafir</td><td>The Forgiver</td><td>85</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">41</td><td class="arabic-cell">فصلت</td><td>Fussilat</td><td>Explained in Detail</td><td>54</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">42</td><td class="arabic-cell">الشورى</td><td>Ash-Shura</td><td>Consultation</td><td>53</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">43</td><td class="arabic-cell">الزخرف</td><td>Az-Zukhruf</td><td>Ornaments of Gold</td><td>89</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">44</td><td class="arabic-cell">الدخان</td><td>Ad-Dukhaan</td><td>The Smoke</td><td>59</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">45</td><td class="arabic-cell">الجاثية</td><td>Al-Jaathiya</td><td>Crouching</td><td>37</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">46</td><td class="arabic-cell">الأحقاف</td><td>Al-Ahqaf</td><td>The Dunes</td><td>35</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">47</td><td class="arabic-cell">محمد</td><td>Muhammad</td><td>Muhammad</td><td>38</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">48</td><td class="arabic-cell">الفتح</td><td>Al-Fath</td><td>The Victory</td><td>29</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">49</td><td class="arabic-cell">الحجرات</td><td>Al-Hujuraat</td><td>The Inner Apartments</td><td>18</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">50</td><td class="arabic-cell">ق</td><td>Qaaf</td><td>The Letter Qaf</td><td>45</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">51</td><td class="arabic-cell">الذاريات</td><td>Adh-Dhaariyat</td><td>The Winnowing Winds</td><td>60</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">52</td><td class="arabic-cell">الطور</td><td>At-Tur</td><td>The Mount</td><td>49</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">53</td><td class="arabic-cell">النجم</td><td>An-Najm</td><td>The Star</td><td>62</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">54</td><td class="arabic-cell">القمر</td><td>Al-Qamar</td><td>The Moon</td><td>55</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">55</td><td class="arabic-cell">الرحمن</td><td>Ar-Rahmaan</td><td>The Beneficent</td><td>78</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">56</td><td class="arabic-cell">الواقعة</td><td>Al-Waaqia</td><td>The Inevitable</td><td>96</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">57</td><td class="arabic-cell">الحديد</td><td>Al-Hadid</td><td>The Iron</td><td>29</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">58</td><td class="arabic-cell">المجادلة</td><td>Al-Mujaadila</td><td>The Pleading Woman</td><td>22</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">59</td><td class="arabic-cell">الحشر</td><td>Al-Hashr</td><td>The Exile</td><td>24</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">60</td><td class="arabic-cell">الممتحنة</td><td>Al-Mumtahana</td><td>She That is Examined</td><td>13</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">61</td><td class="arabic-cell">الصف</td><td>As-Saff</td><td>The Ranks</td><td>14</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">62</td><td class="arabic-cell">الجمعة</td><td>Al-Jumu'a</td><td>Friday</td><td>11</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">63</td><td class="arabic-cell">المنافقون</td><td>Al-Munaafiqoon</td><td>The Hypocrites</td><td>11</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">64</td><td class="arabic-cell">التغابن</td><td>At-Taghaabun</td><td>Mutual Disillusion</td><td>18</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">65</td><td class="arabic-cell">الطلاق</td><td>At-Talaaq</td><td>Divorce</td><td>12</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">66</td><td class="arabic-cell">التحريم</td><td>At-Tahrim</td><td>The Prohibition</td><td>12</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">67</td><td class="arabic-cell">الملك</td><td>Al-Mulk</td><td>The Sovereignty</td><td>30</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">68</td><td class="arabic-cell">القلم</td><td>Al-Qalam</td><td>The Pen</td><td>52</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">69</td><td class="arabic-cell">الحاقة</td><td>Al-Haaqqa</td><td>The Reality</td><td>52</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">70</td><td class="arabic-cell">المعارج</td><td>Al-Ma'aarij</td><td>The Ascending Stairways</td><td>44</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">71</td><td class="arabic-cell">نوح</td><td>Nooh</td><td>Noah</td><td>28</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">72</td><td class="arabic-cell">الجن</td><td>Al-Jinn</td><td>The Jinn</td><td>28</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">73</td><td class="arabic-cell">المزمل</td><td>Al-Muzzammil</td><td>The Enshrouded One</td><td>20</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">74</td><td class="arabic-cell">المدثر</td><td>Al-Muddaththir</td><td>The Cloaked One</td><td>56</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">75</td><td class="arabic-cell">القيامة</td><td>Al-Qiyaama</td><td>The Resurrection</td><td>40</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">76</td><td class="arabic-cell">الإنسان</td><td>Al-Insaan</td><td>Man</td><td>31</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">77</td><td class="arabic-cell">المرسلات</td><td>Al-Mursalaat</td><td>The Emissaries</td><td>50</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">78</td><td class="arabic-cell">النبأ</td><td>An-Naba</td><td>The Announcement</td><td>40</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">79</td><td class="arabic-cell">النازعات</td><td>An-Naazi'aat</td><td>Those Who Drag Forth</td><td>46</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">80</td><td class="arabic-cell">عبس</td><td>Abasa</td><td>He Frowned</td><td>42</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">81</td><td class="arabic-cell">التكوير</td><td>At-Takwir</td><td>The Overthrowing</td><td>29</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">82</td><td class="arabic-cell">الانفطار</td><td>Al-Infitaar</td><td>The Cleaving</td><td>19</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">83</td><td class="arabic-cell">المطففين</td><td>Al-Mutaffifin</td><td>Defrauding</td><td>36</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">84</td><td class="arabic-cell">الانشقاق</td><td>Al-Inshiqaaq</td><td>The Splitting Open</td><td>25</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">85</td><td class="arabic-cell">البروج</td><td>Al-Burooj</td><td>The Constellations</td><td>22</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">86</td><td class="arabic-cell">الطارق</td><td>At-Taariq</td><td>The Morning Star</td><td>17</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">87</td><td class="arabic-cell">الأعلى</td><td>Al-A'laa</td><td>The Most High</td><td>19</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">88</td><td class="arabic-cell">الغاشية</td><td>Al-Ghaashiya</td><td>The Overwhelming</td><td>26</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">89</td><td class="arabic-cell">الفجر</td><td>Al-Fajr</td><td>The Dawn</td><td>30</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">90</td><td class="arabic-cell">البلد</td><td>Al-Balad</td><td>The City</td><td>20</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">91</td><td class="arabic-cell">الشمس</td><td>Ash-Shams</td><td>The Sun</td><td>15</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">92</td><td class="arabic-cell">الليل</td><td>Al-Lail</td><td>The Night</td><td>21</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">93</td><td class="arabic-cell">الضحى</td><td>Ad-Dhuhaa</td><td>The Morning Hours</td><td>11</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">94</td><td class="arabic-cell">الشرح</td><td>Ash-Sharh</td><td>The Consolation</td><td>8</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">95</td><td class="arabic-cell">التين</td><td>At-Tin</td><td>The Fig</td><td>8</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">96</td><td class="arabic-cell">العلق</td><td>Al-Alaq</td><td>The Clot</td><td>19</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">97</td><td class="arabic-cell">القدر</td><td>Al-Qadr</td><td>The Power</td><td>5</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">98</td><td class="arabic-cell">البينة</td><td>Al-Bayyina</td><td>The Evidence</td><td>8</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">99</td><td class="arabic-cell">الزلزلة</td><td>Az-Zalzala</td><td>The Earthquake</td><td>8</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">100</td><td class="arabic-cell">العاديات</td><td>Al-Aadiyaat</td><td>The Chargers</td><td>11</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">101</td><td class="arabic-cell">القارعة</td><td>Al-Qaari'a</td><td>The Calamity</td><td>11</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">102</td><td class="arabic-cell">التكاثر</td><td>At-Takaathur</td><td>Competition</td><td>8</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">103</td><td class="arabic-cell">العصر</td><td>Al-Asr</td><td>The Declining Day</td><td>3</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">104</td><td class="arabic-cell">الهمزة</td><td>Al-Humaza</td><td>The Traducer</td><td>9</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">105</td><td class="arabic-cell">الفيل</td><td>Al-Fil</td><td>The Elephant</td><td>5</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">106</td><td class="arabic-cell">قريش</td><td>Quraish</td><td>Quraysh</td><td>4</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">107</td><td class="arabic-cell">الماعون</td><td>Al-Maa'un</td><td>Almsgiving</td><td>7</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">108</td><td class="arabic-cell">الكوثر</td><td>Al-Kawthar</td><td>Abundance</td><td>3</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">109</td><td class="arabic-cell">الكافرون</td><td>Al-Kaafiroon</td><td>The Disbelievers</td><td>6</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">110</td><td class="arabic-cell">النصر</td><td>An-Nasr</td><td>Divine Support</td><td>3</td><td class="type-medinan">Medinan</td></tr>
+          <tr><td class="num-cell">111</td><td class="arabic-cell">المسد</td><td>Al-Masad</td><td>The Palm Fibre</td><td>5</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">112</td><td class="arabic-cell">الإخلاص</td><td>Al-Ikhlaas</td><td>Sincerity</td><td>4</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">113</td><td class="arabic-cell">الفلق</td><td>Al-Falaq</td><td>The Daybreak</td><td>5</td><td class="type-meccan">Meccan</td></tr>
+          <tr><td class="num-cell">114</td><td class="arabic-cell">الناس</td><td>An-Naas</td><td>Mankind</td><td>6</td><td class="type-meccan">Meccan</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Al-Quran Database Reference Sheet · Arabic: Uthmani Edition · English: Saheeh International · Source: alquran.cloud
+    <div class="footer-arabic">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+  </div>
+
+</div>
+</body>
+</html>
