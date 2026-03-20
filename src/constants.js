@@ -149,6 +149,7 @@ export function noBismillah(surahNum) { return surahNum === 1 || surahNum === 9;
 
 // Helper: get surah meta by number (1-indexed)
 export function getSurahMeta(num) {
+  if (typeof num !== 'number' || !Number.isInteger(num)) return null;
   return SURAH_META[num - 1] || null;
 }
 

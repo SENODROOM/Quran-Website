@@ -322,9 +322,15 @@ describe('quran.json — spot-check known verse content', () => {
   test('Surah 1 Ayah 1 contains bismillah Arabic text', ifLoaded(() => {
     const v = getVerse(1, 1);
     expect(v).not.toBeNull();
-    // Core of bismillah should be present
-    expect(v.arabic).toContain('بِسْمِ');
-    expect(v.arabic).toContain('ٱللَّهِ');
+    // Must not start with BOM
+    expect(v.arabic.codePointAt(0)).not.toBe(0xFEFF);
+    // Strip all harakat/diacritics (U+064B–U+065F, U+0670) before checking base letters
+    const stripped = v.arabic.replace(/[\u064B-\u065F\u0670]/g, '');
+    // Core root letters of bismillah (ba-sin-mim) must be present
+    expect(stripped).toContain('بسم');
+    // لله (lam-lam-ha) is the invariant core of Allah regardless of
+    // whether the alef is U+0627 (ا) or U+0671 (ٱ alef wasla)
+    expect(stripped).toContain('لله');
   }));
 
   test('Surah 1 Ayah 1 English mentions "name of Allah"', ifLoaded(() => {

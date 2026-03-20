@@ -56,6 +56,8 @@ const mockFetch = jest.fn();
 beforeEach(() => {
   mockFetch.mockReset();
   global.fetch = mockFetch;
+  // Clear localStorage so bookmarks/history/prefs don't bleed between tests
+  localStorage.clear();
   // Default: resolve correctly for any surah
   mockFetch.mockImplementation((url) => {
     const match = url.match(/\/surah\/(\d+)\//);
@@ -479,13 +481,18 @@ describe('QuranReader — bookmarks', () => {
     clickSurahByName(container, 'Al-Faatiha');
     await waitFor(() => screen.getByText('عَرَبِيٌّ آيَةٌ 1'));
 
-    const bkBtn = Array.from(container.querySelectorAll('.verse-action-btn[title]'))
-      .find(b => b.title.toLowerCase().includes('bookmark'));
+    // Find the first bookmark button (shows ☆ when not bookmarked)
+    const bkBtn = Array.from(container.querySelectorAll('.verse-action-btn'))
+      .find(b => b.textContent.trim() === '☆');
+    expect(bkBtn).toBeTruthy();
     fireEvent.click(bkBtn);
 
-    // Wait for React re-render to apply the class
+    // After re-render: button switches to ★ and gains .bookmarked class
     await waitFor(() => {
-      expect(bkBtn.classList.contains('bookmarked')).toBe(true);
+      const starBtn = Array.from(container.querySelectorAll('.verse-action-btn'))
+        .find(b => b.textContent.trim() === '★');
+      expect(starBtn).toBeTruthy();
+      expect(starBtn.classList.contains('bookmarked')).toBe(true);
     });
   });
 
@@ -494,11 +501,29 @@ describe('QuranReader — bookmarks', () => {
     clickSurahByName(container, 'Al-Faatiha');
     await waitFor(() => screen.getByText('عَرَبِيٌّ آيَةٌ 1'));
 
-    const bkBtn = Array.from(container.querySelectorAll('.verse-action-btn[title]'))
-      .find(b => b.title.toLowerCase().includes('bookmark'));
-    fireEvent.click(bkBtn); // add
-    fireEvent.click(bkBtn); // remove
-    expect(bkBtn.classList.contains('bookmarked')).toBe(false);
+    // Click ☆ to bookmark verse 1
+    const addBtn = Array.from(container.querySelectorAll('.verse-action-btn'))
+      .find(b => b.textContent.trim() === '☆');
+    fireEvent.click(addBtn);
+
+    // Wait for ★ to appear (bookmarked state)
+    await waitFor(() => {
+      const starred = Array.from(container.querySelectorAll('.verse-action-btn'))
+        .find(b => b.textContent.trim() === '★');
+      expect(starred).toBeTruthy();
+    });
+
+    // Click ★ to remove bookmark
+    const removeBtn = Array.from(container.querySelectorAll('.verse-action-btn'))
+      .find(b => b.textContent.trim() === '★');
+    fireEvent.click(removeBtn);
+
+    // Should revert to ☆ without .bookmarked class
+    await waitFor(() => {
+      const allBtns = Array.from(container.querySelectorAll('.verse-action-btn'));
+      const starBtn = allBtns.find(b => b.textContent.trim() === '★');
+      expect(starBtn).toBeFalsy(); // no ★ remaining for verse 1
+    });
   });
 
   test('unbookmarking restores empty state in Saved tab', async () => {
@@ -506,13 +531,32 @@ describe('QuranReader — bookmarks', () => {
     clickSurahByName(container, 'Al-Faatiha');
     await waitFor(() => screen.getByText('عَرَبِيٌّ آيَةٌ 1'));
 
-    const bkBtn = Array.from(container.querySelectorAll('.verse-action-btn[title]'))
-      .find(b => b.title.toLowerCase().includes('bookmark'));
-    fireEvent.click(bkBtn); // add
-    fireEvent.click(bkBtn); // remove
+    // Add bookmark
+    const addBtn = Array.from(container.querySelectorAll('.verse-action-btn'))
+      .find(b => b.textContent.trim() === '☆');
+    fireEvent.click(addBtn);
+
+    // Wait for bookmarked state
+    await waitFor(() => {
+      expect(Array.from(container.querySelectorAll('.verse-action-btn'))
+        .find(b => b.textContent.trim() === '★')).toBeTruthy();
+    });
+
+    // Remove bookmark
+    const removeBtn = Array.from(container.querySelectorAll('.verse-action-btn'))
+      .find(b => b.textContent.trim() === '★');
+    fireEvent.click(removeBtn);
+
+    // Wait for state to update then switch to Saved tab
+    await waitFor(() => {
+      expect(Array.from(container.querySelectorAll('.verse-action-btn'))
+        .find(b => b.textContent.trim() === '★')).toBeFalsy();
+    });
 
     openSavedTab(container);
-    expect(screen.getByText(/No bookmarks/i)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(/No bookmarks/i)).toBeInTheDocument();
+    });
   });
 
   test('bookmarked surah item gets .bookmarked class', async () => {
