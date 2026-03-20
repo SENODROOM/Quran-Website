@@ -746,43 +746,82 @@ function generatePDFTemplate(surahs) {
 // ── Root wrapper with tab navigation ──────────────────────────────────────
 export default function App() {
   const [activeTab, setActiveTab] = React.useState('reader');
+  const [menuOpen, setMenuOpen]   = React.useState(false);
 
-  const tabBar = {
-    position: 'sticky', top: 0, zIndex: 500,
-    background: 'rgba(7,9,15,0.98)',
-    backdropFilter: 'blur(16px)',
-    borderBottom: '1px solid #1e2540',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 20px',
-    gap: 2,
-    height: 48,
-  };
-  const tabStyle = (id) => ({
-    fontFamily: "'Cinzel', serif",
-    fontSize: 10,
-    letterSpacing: '0.18em',
-    textTransform: 'uppercase',
-    padding: '0 18px',
-    height: '100%',
-    display: 'flex', alignItems: 'center',
-    cursor: 'pointer',
-    border: 'none',
-    borderBottom: `2px solid ${activeTab === id ? '#c8973a' : 'transparent'}`,
-    background: 'transparent',
-    color: activeTab === id ? '#c8973a' : '#4a5578',
-    transition: 'all 0.2s',
-  });
+  const navigate = (tab) => { setActiveTab(tab); setMenuOpen(false); };
 
   return (
     <div>
-      <div style={tabBar}>
-        <div style={{ fontFamily: "'Amiri', serif", fontSize: 22, color: '#c8973a', marginRight: 14, paddingRight: 14, borderRight: '1px solid #1e2540', lineHeight: 1 }}>القرآن</div>
-        <button style={tabStyle('reader')} onClick={() => setActiveTab('reader')}>📖 Reader</button>
-        <button style={tabStyle('downloader')} onClick={() => setActiveTab('downloader')}>⬇ Downloader</button>
+      <nav className="app-nav">
+        {/* Brand */}
+        <div className="nav-brand">
+          <span className="nav-brand-arabic">القرآن</span>
+          <span className="nav-brand-en">The Holy Quran</span>
+        </div>
+
+        {/* Desktop tabs */}
+        <div className="nav-tabs nav-tabs-desktop">
+          <button className={`nav-tab${activeTab==='reader'?' active':''}`} onClick={() => navigate('reader')}>
+            <span className="nav-tab-icon">📖</span>Reader
+          </button>
+          <button className={`nav-tab${activeTab==='downloader'?' active':''}`} onClick={() => navigate('downloader')}>
+            <span className="nav-tab-icon">⬇</span>Downloader
+          </button>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className={`hamburger${menuOpen ? ' open' : ''}`}
+          onClick={() => setMenuOpen(v => !v)}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+        >
+          <span /><span /><span />
+        </button>
+      </nav>
+
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="mobile-drawer" onClick={() => setMenuOpen(false)}>
+          <div className="mobile-drawer-panel" onClick={e => e.stopPropagation()}>
+            <div className="mobile-drawer-header">
+              <span className="mobile-drawer-arabic">القرآن الكريم</span>
+              <button className="mobile-drawer-close" onClick={() => setMenuOpen(false)}>✕</button>
+            </div>
+            <div className="mobile-drawer-links">
+              <button
+                className={`mobile-drawer-link${activeTab==='reader'?' active':''}`}
+                onClick={() => navigate('reader')}
+              >
+                <span className="mobile-drawer-link-icon">📖</span>
+                <span>
+                  <span className="mobile-drawer-link-title">Reader</span>
+                  <span className="mobile-drawer-link-sub">Read all 114 surahs</span>
+                </span>
+              </button>
+              <button
+                className={`mobile-drawer-link${activeTab==='downloader'?' active':''}`}
+                onClick={() => navigate('downloader')}
+              >
+                <span className="mobile-drawer-link-icon">⬇</span>
+                <span>
+                  <span className="mobile-drawer-link-title">Downloader</span>
+                  <span className="mobile-drawer-link-sub">Export JSON · SQL · PDF</span>
+                </span>
+              </button>
+            </div>
+            <div className="mobile-drawer-footer">
+              <span>114 Surahs · 6,236 Verses</span>
+              <span>Arabic + English</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="page-content">
+        {activeTab === 'reader' && <QuranReader />}
+        {activeTab === 'downloader' && <div className="downloader-page"><Downloader /></div>}
       </div>
-      {activeTab === 'reader' && <QuranReader />}
-      {activeTab === 'downloader' && <Downloader />}
     </div>
   );
 }
@@ -963,7 +1002,7 @@ function Downloader() {
   const totalVerses = quranData?.combined.reduce((t, s) => t + s.verses.length, 0) || 0;
 
   return (
-    <div style={S.app}>
+    <div>
       <div style={S.starField} />
 
       <div style={S.container}>

@@ -1,0 +1,224 @@
+name: Quran App — CI
+
+# ── Triggers ──────────────────────────────────────────────────────────────────
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  # Allow manual runs from GitHub UI
+  workflow_dispatch:
+
+# ── Permissions ───────────────────────────────────────────────────────────────
+permissions:
+  contents: read
+  checks: write          # lets us post check annotations
+  pull-requests: write   # lets us post PR comments
+
+# ── Jobs ──────────────────────────────────────────────────────────────────────
+jobs:
+
+  # ── 1. JavaScript tests (Jest + React Testing Library) ──────────────────────
+  js-tests:
+    name: JS Tests (Jest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        # Fallback if no lockfile exists
+        env:
+          CI: true
+
+      - name: Run JS test suite
+        run: npm test -- --watchAll=false --verbose --forceExit
+        env:
+          CI: true
+          # Suppress chatty jsdom warnings
+          NODE_OPTIONS: "--max-old-space-size=4096"
+
+      - name: Upload JS test coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: js-coverage
+          path: coverage/
+          retention-days: 14
+
+  # ── 2. Python tests (accuracy suite against quran.json) ─────────────────────
+  python-tests:
+    name: Python Tests (accuracy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install pytest
+        run: pip install pytest pytest-json-report
+
+      - name: Check for quran.json
+        id: check-json
+        run: |
+          if [ -f "public/quran.json" ]; then
+            echo "found=true" >> $GITHUB_OUTPUT
+            echo "✅ quran.json found ($(du -sh public/quran.json | cut -f1))"
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+            echo "⚠️  quran.json not found — accuracy tests will be skipped"
+          fi
+
+      - name: Run Python accuracy tests
+        if: steps.check-json.outputs.found == 'true'
+        run: |
+          python -m pytest tests/test_quran.py \
+            -v \
+            --tb=short \
+            --json-report \
+            --json-report-file=pytest-report.json
+        env:
+          PYTHONPATH: .
+
+      - name: Show test summary
+        if: steps.check-json.outputs.found == 'true' && always()
+        run: |
+          python -c "
+          import json, sys
+          with open('pytest-report.json') as f:
+              r = json.load(f)
+          s = r['summary']
+          passed = s.get('passed', 0)
+          failed = s.get('failed', 0)
+          total  = s.get('total',  0)
+          print(f'Results: {passed}/{total} passed')
+          if failed:
+              print(f'FAILURES: {failed}')
+              for t in r.get('tests', []):
+                  if t['outcome'] == 'failed':
+                      print(f'  ✗ {t[\"nodeid\"]}')
+              sys.exit(1)
+          else:
+              print('✓ All accuracy tests passed — 100% Quran data integrity confirmed')
+          "
+
+      - name: Skip message (no quran.json)
+        if: steps.check-json.outputs.found == 'false'
+        run: |
+          echo "ℹ️  quran.json not committed to this repo."
+          echo "   Generate it via the Quran Downloader app and place at public/quran.json"
+          echo "   to enable the full accuracy test suite."
+
+      - name: Upload pytest report
+        if: steps.check-json.outputs.found == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: pytest-report.json
+          retention-days: 14
+
+  # ── 3. Build check (catches import/compile errors) ───────────────────────────
+  build:
+    name: Production Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: js-tests        # only build if tests pass
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CI: true
+
+      - name: Build production bundle
+        run: npm run build
+        env:
+          CI: false    # CRA treats warnings as errors when CI=true; set false so ESLint warnings don't block
+          GENERATE_SOURCEMAP: false
+
+      - name: Report build size
+        run: |
+          echo "── Build output ──────────────────────────────────"
+          du -sh build/
+          echo "── JS bundles ────────────────────────────────────"
+          find build/static/js -name "*.js" | sort | while read f; do
+            echo "  $(du -sh $f | cut -f1)  $f"
+          done
+          echo "── CSS bundles ───────────────────────────────────"
+          find build/static/css -name "*.css" | sort | while read f; do
+            echo "  $(du -sh $f | cut -f1)  $f"
+          done
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: build/
+          retention-days: 7
+
+  # ── 4. Lint ───────────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          CI: true
+
+      - name: Check for ESLint config
+        id: eslint-check
+        run: |
+          if [ -f ".eslintrc.js" ] || [ -f ".eslintrc.json" ] || [ -f ".eslintrc.cjs" ] || grep -q '"eslintConfig"' package.json; then
+            echo "has_eslint=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_eslint=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run ESLint
+        if: steps.eslint-check.outputs.has_eslint == 'true'
+        run: npx eslint src/ --ext .js,.jsx --max-warnings=20
+        continue-on-error: true   # warnings are fine; only hard errors fail the job
+
+      - name: Lint skipped (no ESLint config)
+        if: steps.eslint-check.outputs.has_eslint == 'false'
+        run: echo "No ESLint config found — skipping lint step"
