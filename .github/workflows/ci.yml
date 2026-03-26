@@ -70,7 +70,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
+          # No cache: 'pip' here — there is no requirements.txt or pyproject.toml
+          # Dependencies are installed directly in the next step
 
       - name: Install pytest
         run: pip install pytest pytest-json-report
